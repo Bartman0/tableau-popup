@@ -3,6 +3,17 @@
     "name": "Tableau Popup",
     "version": "0.1",
     "description": "Call Tableau dashboard contents for identified customer codes.",
+    "icons": {
+        "16": "icons/icon_16.png",
+        "24": "icons/icon_24.png",
+        "32": "icons/icon_32.png",
+        "48": "icons/icon_48.png",
+        "64": "icons/icon_64.png",
+        "72": "icons/icon_72.png",
+        "96": "icons/icon_96.png",
+        "128": "icons/icon_128.png",
+        "256": "icons/icon_256.png"
+    },
     "browser_action": {
         "default_icon": "icons/icon_48.png",
         "default_popup": "popup.html"
