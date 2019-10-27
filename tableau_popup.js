@@ -1,16 +1,29 @@
-chrome.runtime.onMessage.addListener(receiver);
+function setup() {
+    var selection = chrome.extension.getBackgroundPage().selection;
 
-var selection = 12345678;
+    console.log("extension tableau popup setup: ", selection);
 
-function receiver(request, sender, sendResponse) {
-    console.log("receiver called: ", request.selection);
-    selection = request.selection;
+    if (selection === undefined) return;
+
+    function gotSelection(data) {
+        var p = document.getElementById("selection");
+        if (!p) {
+            console.error("can not find selection id");
+        }
+        if (data) {
+            p.textContent = data;
+        } else {
+            p.textContent = "Something went wrong";
+        }
+    }
+
+    gotSelection(selection);
 }
 
-function initViz() {
+function initViz(selection) {
     var containerDiv = document.getElementById("vizContainer"),
-        url = "https://hansanders-bi-srv-tst.hosting.inergy.nl/views/Financialweek/Financialweekanalysis";
-
+        baseUrl = "https://hansanders-bi-srv-tst.hosting.inergy.nl/views/Financialweek/Financialweekanalysis";
+    var url = baseUrl + "?selection=" + selection;
     var viz = new tableau.Viz(containerDiv, url);
 
     var notification = new Notification("Tableau link", {
@@ -18,11 +31,19 @@ function initViz() {
         body: "Dashboard link for " + selection
     });
     notification.onclick = function() {
-        window.open(
-            // "https://hansanders-bi-srv-tst.hosting.inergy.nl/views/Financialweek/Financialweekanalysis?Store+id=" + selection
-            "https://hansanders-bi-srv-tst.hosting.inergy.nl/views/Financialweek/Financialweekanalysis"
-        );
+        chrome.windows.getCurrent(function(win) {
+            console.log("url in notification: " + url);
+            chrome.windows.create({
+                url: url,
+                type: "normal",
+                state: "fullscreen"
+            });
+        });
     };
 }
 
-$(initViz);
+$(window).bind("load", function() {
+    console.log("bind load executed in popup");
+    setup();
+    $(initViz(document.getElementById("selection") && document.getElementById("selection").textContent));
+});

@@ -1,3 +1,5 @@
+*.mov
+
 # Logs
 logs
 *.log
